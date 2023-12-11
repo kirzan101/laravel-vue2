@@ -7,6 +7,16 @@ use App\Models\User;
 class Helper
 {
     /**
+     * set default success status
+     */
+    const SUCCESS = 'success';
+
+    /**
+     * set default error status
+     */
+    const ERROR = 'error';
+
+    /**
      * Generate unique username
      * Username format: {first name initial}{last name}
      * Example result: Juan Dela Cruz => jdelacruz
@@ -67,5 +77,39 @@ class Helper
         }
 
         return $result;
+    }
+
+    /**
+     * default messages by http codes
+     *
+     * @param integer $httpCode
+     *  $httpCode 201 => Created | <br />
+     *  $httpCode 200 => Updated | <br />
+     *  $httpCode 204 => Deleted | <br />
+     * @return string
+     */
+    public static function message(?int $httpCode = null): string
+    {
+        $message = null;
+
+        switch ($httpCode) {
+            case 201:
+                $message = 'Successfully created!';
+                break;
+
+            case 200:
+                $message = 'Successfully updated!';
+                break;
+
+            case 204:
+                $message = 'Successfully deleted!';
+                break;
+
+            default:
+                $message = '';
+                break;
+        }
+
+        return $message;
     }
 }
