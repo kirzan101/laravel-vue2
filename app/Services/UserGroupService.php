@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Helpers\Helper;
 use App\Http\Resources\UserGroupResource;
 use App\Interfaces\UserGroupInterface;
+use App\Interfaces\UserGroupPermissionInterface;
 use App\Models\UserGroup;
 use App\Traits\ReturnCollectionTrait;
 use App\Traits\ReturnResultTrait;
@@ -19,7 +20,7 @@ class UserGroupService implements UserGroupInterface
     public ?int $last_id = null;
     public array $return_result = [];
 
-    public function __construct(private UserGroupPermissionService $userGroupPermissionService)
+    public function __construct(private UserGroupPermissionInterface $userGroupPermission)
     {
     }
 
@@ -57,7 +58,7 @@ class UserGroupService implements UserGroupInterface
             $this->return_result = $this->returnResult(201, Helper::SUCCESS, Helper::message(201), $user_group->id, new UserGroupResource($user_group));
 
             //create permissions
-            $result = $this->userGroupPermissionService->createMultipleUserGroupPermission($request['permissions'], $user_group->id);
+            $result = $this->userGroupPermission->createMultipleUserGroupPermission($request['permissions'], $user_group->id);
 
             // if creation of permissions has an error
             if ($result['status'] == 'error') {
@@ -93,7 +94,7 @@ class UserGroupService implements UserGroupInterface
             $this->return_result = $this->returnResult(200, 'success', Helper::message(200), $user_group->id, new UserGroupResource($user_group));
 
             // update user group permissions
-            $result = $this->userGroupPermissionService->updateUserGroupPermissionByUserGroupId($request['permissions'], $userGroup->id);
+            $result = $this->userGroupPermission->updateUserGroupPermissionByUserGroupId($request['permissions'], $userGroup->id);
 
             // if update of permissions has an error
             if ($result['status'] == 'error') {
@@ -148,7 +149,7 @@ class UserGroupService implements UserGroupInterface
             $this->last_id = $userGroup->id;
 
             //delete user group permisions
-            $this->userGroupPermissionService->deleteUserGroupPermissionByUserGroupId($userGroup->id);
+            $this->userGroupPermission->deleteUserGroupPermissionByUserGroupId($userGroup->id);
 
             $userGroup->delete();
 
